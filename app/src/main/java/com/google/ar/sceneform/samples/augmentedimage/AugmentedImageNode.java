@@ -72,37 +72,56 @@ import java.util.concurrent.CompletableFuture;
    * extents of the image. There is no need to worry about world coordinates since everything is
    * relative to the centre of the image, which is the parent node of the corners.
    */
-//  @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
-//  public void setImage(AugmentedImage image) {
-//    this.image = image;
-//
-//    // If any of the models are not loaded, then recurse when all are loaded.
-//    if (!ketchup.isDone()) {
-//      CompletableFuture.allOf(ketchup)
-//              .thenAccept((Void aVoid) -> setImage(image))
-//              .exceptionally(
-//                      throwable -> {
-//                        Log.e(TAG, "Exception loading", throwable);
-//                        return null;
-//                      });
-//    }
-//
-//    // Set the anchor based on the ketchup of the image.
-//    setAnchor(image.createAnchor(image.getCenterPose()));
-//
-//    // Make the 4 corner nodes.
-//    Vector3 localPosition = new Vector3();
-//    Node cornerNode;
-//
-//    // ketchup
-//    localPosition.set(0.0f, 0.0f, 0.0f);
-//    cornerNode = new Node();
-//    cornerNode.setParent(this);
-//    cornerNode.setLocalPosition(localPosition);
-//    cornerNode.setRenderable(ketchup.getNow(null));
-//  }
+  @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
+  public void setImage(AugmentedImage image) {
+    this.image = image;
 
-//  public AugmentedImage getImage() {
-//    return image;
-//  }
+    // If any of the models are not loaded, then recurse when all are loaded.
+    if (!ketchup.isDone()) {
+      CompletableFuture.allOf(ketchup)
+              .thenAccept((Void aVoid) -> setImage(image))
+              .exceptionally(
+                      throwable -> {
+                        Log.e(TAG, "Exception loading", throwable);
+                        return null;
+                      });
+    }
+
+      else if (!pikachu.isDone()) {
+      CompletableFuture.allOf(pikachu)
+              .thenAccept((Void aVoid) -> setImage(image))
+              .exceptionally(
+                      throwable -> {
+                        Log.e(TAG, "Exception loading", throwable);
+                        return null;
+                      });
+    }
+
+    else if (!pokeball.isDone()) {
+      CompletableFuture.allOf(pokeball)
+              .thenAccept((Void aVoid) -> setImage(image))
+              .exceptionally(
+                      throwable -> {
+                        Log.e(TAG, "Exception loading", throwable);
+                        return null;
+                      });
+    }
+
+    // Set the anchor based on the ketchup of the image.
+    setAnchor(image.createAnchor(image.getCenterPose()));
+
+    // Make the 4 corner nodes.
+    Vector3 localPosition = new Vector3();
+    Node cornerNode;
+
+    localPosition.set(0.0f, 0.0f, 0.0f);
+    cornerNode = new Node();
+    cornerNode.setParent(this);
+    cornerNode.setLocalPosition(localPosition);
+    cornerNode.setRenderable(ketchup.getNow(null));
+  }
+
+  public AugmentedImage getImage() {
+    return image;
+  }
 }
