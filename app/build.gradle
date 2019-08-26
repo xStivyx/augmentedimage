@@ -60,3 +60,21 @@ sceneform.asset('sampledata/models/Ketchup.obj',
         'default',
         'sampledata/models/Ketchup.sfa',
         'src/main/assets/Ketchup')
+
+sceneform.asset('sampledata/models/eevee.fbx',
+        'default',
+        'sampledata/models/eevee.sfa',
+        'src/main/assets/eevee')
+
+
+
+
+sceneform.asset('sampledata/models/pokeball.obj',
+        'default',
+        'sampledata/models/pokeball.sfa',
+        'src/main/assets/pokeball')
+
+sceneform.asset('sampledata/models/pikachu.obj',
+        'default',
+        'sampledata/models/pikachu.sfa',
+        'src/main/assets/pikachu')
