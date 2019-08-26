@@ -145,38 +145,41 @@ public class AugmentedImageActivity extends AppCompatActivity {
                     // Have to switch to UI Thread to update View.
                     fitToScanView.setVisibility(View.GONE);
 
+                    Anchor anchor = augmentedImage.createAnchor(augmentedImage.getCenterPose());
+                    AnchorNode aNode = new AnchorNode(anchor);
+                    aNode.setParent(arFragment.getArSceneView().getScene());
+
                     // Create a new anchor for newly found images.
                     if (!augmentedImageMap.containsKey(augmentedImage)) {
 
                         switch (augmentedImage.getIndex()) {
-                            case 0: {
+                            case 0 :
+                                AugmentedImageNode augNode = new AugmentedImageNode(this);
+                                //augNode.setImage(augmentedImage);
+                                augmentedImageMap.put(augmentedImage, augNode);
+                                //arFragment.getArSceneView().getScene().addChild(augNode);
+                                //augNode.setLocalScale(new Vector3(0.1f, 0.1f, 0.1f));
 
-                            }
                             break;
 
-                            case 1:{
+                            case 1 :
 
-                            }
+
                             break;
+
+                            case 2 :
+
+
                         }
-
-                        Anchor anchor = augmentedImage.createAnchor(augmentedImage.getCenterPose());
-                        AnchorNode aNode = new AnchorNode(anchor);
-                        aNode.setParent(arFragment.getArSceneView().getScene());
-
-                        AugmentedImageNode augNode = new AugmentedImageNode(this);
-                        //augNode.setImage(augmentedImage);
-                        augmentedImageMap.put(augmentedImage, augNode);
-                        //arFragment.getArSceneView().getScene().addChild(augNode);
-                        //augNode.setLocalScale(new Vector3(0.1f, 0.1f, 0.1f));
-
-                        TransformableNode tNode = new TransformableNode(arFragment.getTransformationSystem());
-                        tNode.setParent(aNode);
-
-                        tNode.setRenderable(andyRenderable);
-                        //tNode.setLocalScale(new Vector3(1f, 1f, 1f));
-                        tNode.select();
                     }
+
+                    TransformableNode tNode = new TransformableNode(arFragment.getTransformationSystem());
+                    tNode.setParent(aNode);
+
+                    tNode.setRenderable(andyRenderable);
+                    //tNode.setLocalScale(new Vector3(1f, 1f, 1f));
+                    tNode.select();
+
                     break;
 
                 case STOPPED:
