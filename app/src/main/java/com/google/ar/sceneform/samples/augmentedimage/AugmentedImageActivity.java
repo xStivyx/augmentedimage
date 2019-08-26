@@ -33,6 +33,7 @@ import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
+import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.samples.common.helpers.SnackbarHelper;
 import com.google.ar.sceneform.ux.ArFragment;
@@ -42,26 +43,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * This application demonstrates using augmented images to place anchor nodes. app to include image
- * tracking functionality.
- *
- * <p>In this example, we assume all images are static or moving slowly with a large occupation of
- * the screen. If the target is actively moving, we recommend to check
- * ArAugmentedImage_getTrackingMethod() and render only when the tracking method equals to
- * AR_AUGMENTED_IMAGE_TRACKING_METHOD_FULL_TRACKING. See details in <a
- * href="https://developers.google.com/ar/develop/c/augmented-images/">Recognize and Augment
- * Images</a>.
- */
+
 public class AugmentedImageActivity extends AppCompatActivity {
 
     private ArFragment arFragment;
-    private ModelRenderable andyRenderable;
+    private ModelRenderable pikachu, eevee, pokeball;
     private ImageView fitToScanView;
     private HitResult hitResult;
 
-    // Augmented image and its associated center pose anchor, keyed by the augmented image in
-    // the database.
     private final Map<AugmentedImage, AugmentedImageNode> augmentedImageMap = new HashMap<>();
 
     @Override
@@ -72,22 +61,44 @@ public class AugmentedImageActivity extends AppCompatActivity {
         Button btn = findViewById(R.id.button);
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Log.v("케챱!!!", "인식완료");
-
+                augmentedImageMap.clear();
             }
         });
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         fitToScanView = findViewById(R.id.image_view_fit_to_scan);
-
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdateFrame);
 
-        // When you build a Renderable, Sceneform loads its resources in the background while returning
-        // a CompletableFuture. Call thenAccept(), handle(), or check isDone() before calling get().
+        ModelRenderable.builder()
+                .setSource(this, R.raw.pikachu)
+                .build()
+                .thenAccept(renderable -> pikachu = renderable)
+                .exceptionally(
+                        throwable -> {
+                            Toast toast =
+                                    Toast.makeText(this, "Unable to load andy renderable", Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
+                            return null;
+                        });
+
         ModelRenderable.builder()
                 .setSource(this, R.raw.eevee)
                 .build()
-                .thenAccept(renderable -> andyRenderable = renderable)
+                .thenAccept(renderable -> eevee = renderable)
+                .exceptionally(
+                        throwable -> {
+                            Toast toast =
+                                    Toast.makeText(this, "Unable to load andy renderable", Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
+                            return null;
+                        });
+
+        ModelRenderable.builder()
+                .setSource(this, R.raw.pokeball)
+                .build()
+                .thenAccept(renderable -> pokeball = renderable)
                 .exceptionally(
                         throwable -> {
                             Toast toast =
@@ -99,12 +110,11 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-                    if (andyRenderable == null) {
+                    if (pikachu == null || eevee == null || pokeball == null) {
                         return;
                     }
+            });
 
-
-                });
     }
 
     @Override
@@ -115,15 +125,9 @@ public class AugmentedImageActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Registered with the Sceneform Scene object, this method is called at the start of each frame.
-     *
-     * @param frameTime - time since last frame.
-     */
     private void onUpdateFrame(FrameTime frameTime) {
         Frame frame = arFragment.getArSceneView().getArFrame();
 
-        // If there is no frame, just return.
         if (frame == null) {
             return;
         }
@@ -151,13 +155,6 @@ public class AugmentedImageActivity extends AppCompatActivity {
                     // Create a new anchor for newly found images.
                     if (!augmentedImageMap.containsKey(augmentedImage)) {
 
-//                        switch (augmentedImage.getIndex()) {
-//                            case 0:
-//                                break;
-//
-//                            case 1:
-//                                break;
-//                        }
 
                         Anchor anchor = augmentedImage.createAnchor(augmentedImage.getCenterPose());
                         AnchorNode aNode = new AnchorNode(anchor);
@@ -170,8 +167,22 @@ public class AugmentedImageActivity extends AppCompatActivity {
                         TransformableNode tNode = new TransformableNode(arFragment.getTransformationSystem());
                         tNode.setParent(aNode);
 
-                        tNode.setRenderable(andyRenderable);
-                        //tNode.setLocalScale(new Vector3(1f, 1f, 1f));
+                        switch (augmentedImage.getIndex()) {
+                            case 0:
+                                tNode.setRenderable(pikachu);
+                                tNode.setLocalScale(new Vector3(0.1f, 0.1f, 0.1f));
+                                break;
+
+                            case 1:
+                                tNode.setRenderable(eevee);
+                                tNode.setLocalScale(new Vector3(0.6f, 0.6f, 0.6f));
+                                break;
+
+                            case 2:
+                                tNode.setRenderable(pokeball);
+                                tNode.setLocalScale(new Vector3(0.6f, 0.6f, 0.6f));
+                        }
+
                         tNode.select();
                     }
 
