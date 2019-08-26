@@ -31,10 +31,8 @@ import com.google.ar.core.AugmentedImage;
 import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
-import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
-import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.samples.common.helpers.SnackbarHelper;
 import com.google.ar.sceneform.ux.ArFragment;
@@ -60,7 +58,6 @@ public class AugmentedImageActivity extends AppCompatActivity {
     private ArFragment arFragment;
     private ModelRenderable andyRenderable;
     private ImageView fitToScanView;
-    private HashMap<Integer, Integer> isExists = new HashMap<Integer, Integer>();
     private HitResult hitResult;
 
     // Augmented image and its associated center pose anchor, keyed by the augmented image in
@@ -88,7 +85,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
         // When you build a Renderable, Sceneform loads its resources in the background while returning
         // a CompletableFuture. Call thenAccept(), handle(), or check isDone() before calling get().
         ModelRenderable.builder()
-                .setSource(this, R.raw.ketchup)
+                .setSource(this, R.raw.eevee)
                 .build()
                 .thenAccept(renderable -> andyRenderable = renderable)
                 .exceptionally(
@@ -108,7 +105,6 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
 
                 });
-
     }
 
     @Override
@@ -136,7 +132,9 @@ public class AugmentedImageActivity extends AppCompatActivity {
                 frame.getUpdatedTrackables(AugmentedImage.class);
 
         for (AugmentedImage augmentedImage : updatedAugmentedImages) {
+
             switch (augmentedImage.getTrackingState()) {
+
                 case PAUSED:
                     // When an image is in PAUSED state, but the camera is not PAUSED, it has been detected,
                     // but not yet tracked.
@@ -148,39 +146,32 @@ public class AugmentedImageActivity extends AppCompatActivity {
                     // Have to switch to UI Thread to update View.
                     fitToScanView.setVisibility(View.GONE);
 
-                    Anchor anchor = augmentedImage.createAnchor(augmentedImage.getCenterPose());
-                    AnchorNode aNode = new AnchorNode(anchor);
-                    aNode.setParent(arFragment.getArSceneView().getScene());
+
 
                     // Create a new anchor for newly found images.
                     if (!augmentedImageMap.containsKey(augmentedImage)) {
 
-
-//                            AugmentedImageNode augNode = new AugmentedImageNode(this);
-                            //augNode.setImage(augmentedImage);
-//                            augmentedImageMap.put(augmentedImage, augNode);
-//                            arobj[augmentedImage.getIndex()] = 1;
-                            //arFragment.getArSceneView().getScene().addChild(augNode);
-//                            augNode.setLocalScale(new Vector3(0.1f, 0.1f, 0.1f));
-
 //                        switch (augmentedImage.getIndex()) {
-//                            case 0 :
-//                            break;
+//                            case 0:
+//                                break;
 //
-//                            case 1 :
-//                            break;
-//
-//                            case 2 :
+//                            case 1:
+//                                break;
 //                        }
-                    }
 
-
-                    if (isExists.get(augmentedImage.getIndex()) != 1 ) {
+                        Anchor anchor = augmentedImage.createAnchor(augmentedImage.getCenterPose());
+                        AnchorNode aNode = new AnchorNode(anchor);
+                        aNode.setParent(arFragment.getArSceneView().getScene());
+                        AugmentedImageNode augNode = new AugmentedImageNode(this);
+                        //augNode.setImage(augmentedImage);
+                        augmentedImageMap.put(augmentedImage, augNode);
+                        //arFragment.getArSceneView().getScene().addChild(augNode);
+                        //augNode.setLocalScale(new Vector3(0.1f, 0.1f, 0.1f));
                         TransformableNode tNode = new TransformableNode(arFragment.getTransformationSystem());
                         tNode.setParent(aNode);
-                        isExists.put(augmentedImage.getIndex(), 1);
+
                         tNode.setRenderable(andyRenderable);
-                        tNode.setLocalScale(new Vector3(1f, 1f, 1f));
+                        //tNode.setLocalScale(new Vector3(1f, 1f, 1f));
                         tNode.select();
                     }
 
@@ -188,7 +179,6 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
                 case STOPPED:
                     augmentedImageMap.remove(augmentedImage);
-                    isExists.put(augmentedImage.getIndex(), 0);
                     break;
             }
         }

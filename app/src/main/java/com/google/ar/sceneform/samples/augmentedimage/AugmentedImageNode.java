@@ -44,7 +44,6 @@ import java.util.concurrent.CompletableFuture;
     private static CompletableFuture<ModelRenderable> pokeball;
 
   public AugmentedImageNode(Context context) {
-    // Upon construction, start loading the models for the corners of the frame.
     if (ketchup == null) {
       ketchup =
               ModelRenderable.builder()
