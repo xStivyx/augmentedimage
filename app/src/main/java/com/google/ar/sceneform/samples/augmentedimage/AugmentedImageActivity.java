@@ -60,6 +60,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
     private ArFragment arFragment;
     private ModelRenderable andyRenderable;
     private ImageView fitToScanView;
+    private HashMap<Integer, Integer> isExists = new HashMap<Integer, Integer>();
     private HitResult hitResult;
 
     // Augmented image and its associated center pose anchor, keyed by the augmented image in
@@ -107,6 +108,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
 
                 });
+
     }
 
     @Override
@@ -132,6 +134,7 @@ public class AugmentedImageActivity extends AppCompatActivity {
 
         Collection<AugmentedImage> updatedAugmentedImages =
                 frame.getUpdatedTrackables(AugmentedImage.class);
+
         for (AugmentedImage augmentedImage : updatedAugmentedImages) {
             switch (augmentedImage.getTrackingState()) {
                 case PAUSED:
@@ -152,38 +155,40 @@ public class AugmentedImageActivity extends AppCompatActivity {
                     // Create a new anchor for newly found images.
                     if (!augmentedImageMap.containsKey(augmentedImage)) {
 
-                        switch (augmentedImage.getIndex()) {
-                            case 0 :
-                                AugmentedImageNode augNode = new AugmentedImageNode(this);
-                                //augNode.setImage(augmentedImage);
-                                augmentedImageMap.put(augmentedImage, augNode);
-                                //arFragment.getArSceneView().getScene().addChild(augNode);
-                                //augNode.setLocalScale(new Vector3(0.1f, 0.1f, 0.1f));
 
-                            break;
+//                            AugmentedImageNode augNode = new AugmentedImageNode(this);
+                            //augNode.setImage(augmentedImage);
+//                            augmentedImageMap.put(augmentedImage, augNode);
+//                            arobj[augmentedImage.getIndex()] = 1;
+                            //arFragment.getArSceneView().getScene().addChild(augNode);
+//                            augNode.setLocalScale(new Vector3(0.1f, 0.1f, 0.1f));
 
-                            case 1 :
-
-
-                            break;
-
-                            case 2 :
-
-
-                        }
+//                        switch (augmentedImage.getIndex()) {
+//                            case 0 :
+//                            break;
+//
+//                            case 1 :
+//                            break;
+//
+//                            case 2 :
+//                        }
                     }
 
-                    TransformableNode tNode = new TransformableNode(arFragment.getTransformationSystem());
-                    tNode.setParent(aNode);
 
-                    tNode.setRenderable(andyRenderable);
-                    //tNode.setLocalScale(new Vector3(1f, 1f, 1f));
-                    tNode.select();
+                    if (isExists.get(augmentedImage.getIndex()) != 1 ) {
+                        TransformableNode tNode = new TransformableNode(arFragment.getTransformationSystem());
+                        tNode.setParent(aNode);
+                        isExists.put(augmentedImage.getIndex(), 1);
+                        tNode.setRenderable(andyRenderable);
+                        tNode.setLocalScale(new Vector3(1f, 1f, 1f));
+                        tNode.select();
+                    }
 
                     break;
 
                 case STOPPED:
                     augmentedImageMap.remove(augmentedImage);
+                    isExists.put(augmentedImage.getIndex(), 0);
                     break;
             }
         }
