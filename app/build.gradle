@@ -66,9 +66,6 @@ sceneform.asset('sampledata/models/eevee.fbx',
         'sampledata/models/eevee.sfa',
         'src/main/assets/eevee')
 
-
-
-
 sceneform.asset('sampledata/models/pokeball.obj',
         'default',
         'sampledata/models/pokeball.sfa',

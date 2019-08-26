@@ -30,20 +30,18 @@ import java.util.concurrent.CompletableFuture;
  * Node for rendering an augmented image. The image is framed by placing the virtual picture frame
  * at the corners of the augmented image trackable.
  */
-@SuppressWarnings({"AndroidApiChecker"})
-public class AugmentedImageNode extends AnchorNode {
+  @SuppressWarnings({"AndroidApiChecker"})
+  public class AugmentedImageNode extends AnchorNode {
 
-  private static final String TAG = "AugmentedImageNode";
+    private static final String TAG = "AugmentedImageNode";
 
-  // The augmented image represented by this node.
-  private AugmentedImage image;
+    // The augmented image represented by this node.
+    private AugmentedImage image;
 
-  // Models of the 4 corners.  We use completable futures here to simplify
-  // the error handling and asynchronous loading.  The loading is started with the
-  // first construction of an instance, and then used when the image is set.
-  private static CompletableFuture<ModelRenderable> ketchup;
-  private static CompletableFuture<ModelRenderable> obj1;
-
+    //available models
+    private static CompletableFuture<ModelRenderable> ketchup;
+    private static CompletableFuture<ModelRenderable> pikachu;
+    private static CompletableFuture<ModelRenderable> pokeball;
 
   public AugmentedImageNode(Context context) {
     // Upon construction, start loading the models for the corners of the frame.
@@ -53,10 +51,18 @@ public class AugmentedImageNode extends AnchorNode {
                       .setSource(context, Uri.parse("models/Ketchup.sfb"))
                       .build();
     }
-    if (obj1 == null) {
-      obj1 =
+
+    else if (pikachu == null) {
+      pikachu =
               ModelRenderable.builder()
-                      .setSource(context, Uri.parse("models/Ketchup.sfb"))
+                      .setSource(context, Uri.parse("models/pikachu.sfb"))
+                      .build();
+    }
+
+    else if (pokeball == null) {
+      pokeball =
+              ModelRenderable.builder()
+                      .setSource(context, Uri.parse("models/pokeball.sfb"))
                       .build();
     }
   }
@@ -101,4 +107,3 @@ public class AugmentedImageNode extends AnchorNode {
 //    return image;
 //  }
 }
-
