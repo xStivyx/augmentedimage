@@ -30,24 +30,24 @@ import java.util.concurrent.CompletableFuture;
  * Node for rendering an augmented image. The image is framed by placing the virtual picture frame
  * at the corners of the augmented image trackable.
  */
-  @SuppressWarnings({"AndroidApiChecker"})
-  public class AugmentedImageNode extends AnchorNode {
+@SuppressWarnings({"AndroidApiChecker"})
+public class AugmentedImageNode extends AnchorNode {
 
-    private static final String TAG = "AugmentedImageNode";
+  private static final String TAG = "AugmentedImageNode";
 
-    // The augmented image represented by this node.
-    private AugmentedImage image;
+  // The augmented image represented by this node.
+  private AugmentedImage image;
 
-    //available models
-    private static CompletableFuture<ModelRenderable> ketchup;
-    private static CompletableFuture<ModelRenderable> pikachu;
-    private static CompletableFuture<ModelRenderable> pokeball;
+  //available models
+  private static CompletableFuture<ModelRenderable> eevee;
+  private static CompletableFuture<ModelRenderable> pikachu;
+  private static CompletableFuture<ModelRenderable> pokeball;
 
   public AugmentedImageNode(Context context) {
-    if (ketchup == null) {
-      ketchup =
+    if (eevee == null) {
+      eevee =
               ModelRenderable.builder()
-                      .setSource(context, Uri.parse("models/Ketchup.sfb"))
+                      .setSource(context, Uri.parse("models/eevee.sfb"))
                       .build();
     }
 
@@ -77,8 +77,8 @@ import java.util.concurrent.CompletableFuture;
     this.image = image;
 
     // If any of the models are not loaded, then recurse when all are loaded.
-    if (!ketchup.isDone()) {
-      CompletableFuture.allOf(ketchup)
+    if (!eevee.isDone()) {
+      CompletableFuture.allOf(eevee)
               .thenAccept((Void aVoid) -> setImage(image))
               .exceptionally(
                       throwable -> {
@@ -87,7 +87,7 @@ import java.util.concurrent.CompletableFuture;
                       });
     }
 
-      else if (!pikachu.isDone()) {
+    else if (!pikachu.isDone()) {
       CompletableFuture.allOf(pikachu)
               .thenAccept((Void aVoid) -> setImage(image))
               .exceptionally(
@@ -118,7 +118,6 @@ import java.util.concurrent.CompletableFuture;
     cornerNode = new Node();
     cornerNode.setParent(this);
     cornerNode.setLocalPosition(localPosition);
-    cornerNode.setRenderable(ketchup.getNow(null));
   }
 
   public AugmentedImage getImage() {
